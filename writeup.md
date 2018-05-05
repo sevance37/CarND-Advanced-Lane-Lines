@@ -3,7 +3,7 @@
 
 **The goal of this project is to find and highlight the lane in which the car is traveling.  An estimate of the lane curvature and vehicle position will also be shown.**
 
-<img src="writeup_images/test2wlane.jpg" alt="test2wlane" width="500px;" align="center"/>
+<img src="writeup_images/test2wlane.jpg" alt="test2wlane" width="800px;" align="center"/>
 
 
 #### The following steps were taken to accomplish this task.
@@ -28,7 +28,7 @@ To remove lens distortions from an image, the function undistort_image() was wri
 
 Below is an example for one of the chessboard images where the distorted image, the chessboard corners in the distorted image, and then the undistorted image is show.
 
-<img src="writeup_images/chessboard.jpg" alt="chessboard" width="700px;" align="center"/>
+<img src="writeup_images/chessboard.jpg" alt="chessboard" width="800px;" align="center"/>
 
 
 ### The pipeline.
@@ -37,14 +37,14 @@ To process each image in the video, a pipeline was used.  The main function for 
 #### 1. Correct the image for lens distortions.
 As described above, the function undistort_image() was written to correct an image for lens distortions.  Its does this by using calibration points and opencv functions.  An example of a processed image is shown below. 
 
-<img src="writeup_images/undist_test_images.jpg" alt="undistort" width="700px;" align="center"/>
+<img src="writeup_images/undist_test_images.jpg" alt="undistort" width="800px;" align="center"/>
 
 #### 2. Create an edges image where the edges are identified using color information and the Sobel filter.
 The function get_binary_image() is called to create an edges image from the undistorted image.  The function converts the undistorted image from RGB (Red, Green, Blue) colors to HLS (Hue, Lightness, Saturation) colors.  The saturation channel is used since lane lines tend to show up well in this spectrum.  A Sobel filter that detects edges is applied to the lightness channel.  The Sobel filter is used since it is able to detect edges well.  The final edges image is a binary image where a pixel value of 1 represents high saturation or low normalized Sobel values in the undistorted image.
 
 While this approach did well on the project video images, it performed poorly on the challenge video images.  This was improved by first applying a red color mask to the undistorted image, and then processing the image as described above.  An example of the undistorted image and the resulting edges image is shown below.
 
-<img src="writeup_images/binary_edge_images_red.jpg" alt="edge image" width="700px;" align="center"/>
+<img src="writeup_images/binary_edge_images_red.jpg" alt="edge image" width="800px;" align="center"/>
 
 #### 3. Transform the edge image into a birds-eye view image.
 To better identify the lanes and extract information from them, the edge image is transformed from the front perspective into the birds-eye view perspective.  The function get_bev_image() was written to make this transformation. 
@@ -63,7 +63,7 @@ The source points (trapezoid corners) and destination points (rectangle corners)
 This get_bev_image() function defines these points and then calls the
 opencv functions getPerspectiveTransform() and warpPerspective() to make the transformation.  The two straight lanes edge images from the front and from the birds-eye view perspective are shown below. 
 
-<img src="writeup_images/bev_images.jpg" alt="edge image" width="700px;" align="center"/>
+<img src="writeup_images/bev_images.jpg" alt="edge image" width="800px;" align="center"/>
 
 #### 4. Detect the lane lines and fit quadratic functions to them.  Calculate the lane curvature and vehicle position relative to the center.
 The function get_lane_fits() was written to accomplish these tasks.  The lane line is represented by a quadratic function of the form $v(h) = c_0 + c_1 h^2 + c_2 h^2$, where v is the vertical position and h is the horizontal position in the image.  The coefficients for these lines are estimated using a weighted least square fit of the lane pixel candidates from the edge image.  To find the pixel candidates, two different algorithms are used.
@@ -88,7 +88,7 @@ The center of the lane is the average of the positions where the right and left 
 
 The birds-eye view lane image is then transformed back from the birds-eye view perspective to the original perspective using the opencv functions getPerspectiveTransform() and warpPerspective().  It is then combined with the initial undistorted image from #1 above using the opencv function addWeighted().  The average radius of curvature and distance from center is then displayed on the combined image using the opencv function putText().  An example of the start and the end of this pipeline is shown below
 
-<img src="writeup_images/test2wlane.jpg" alt="test2wlane" width="500px;" align="center"/>
+<img src="writeup_images/test2wlane.jpg" alt="test2wlane" width="800px;" align="center"/>
 
 ### Videos
 Two videos were processed using this pipeline and are shown in the accompanying jupyter notebook.  They can also be found in the writeup_videos directory.
